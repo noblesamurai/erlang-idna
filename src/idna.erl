@@ -24,17 +24,17 @@ utf8_to_ascii(Domain) ->
 
 to_ascii([], Acc) ->
   lists:reverse(Acc);
-to_ascii([Part|Parts], []) ->
-  to_ascii(Parts, lists:reverse(part_to_ascii(Part)));
-to_ascii([Part|Parts], Acc) ->
-  to_ascii(Parts, lists:reverse(part_to_ascii(Part), [$.|Acc])).
+to_ascii([Label|Labels], []) ->
+  to_ascii(Labels, lists:reverse(label_to_ascii(Label)));
+to_ascii([Label|Labels], Acc) ->
+  to_ascii(Labels, lists:reverse(label_to_ascii(Label), [$.|Acc])).
 
-part_to_ascii(Part) ->
-  case lists:all(fun(C) -> xmerl_ucs:is_ascii(C) end, Part) of
+label_to_ascii(Label) ->
+  case lists:all(fun(C) -> xmerl_ucs:is_ascii(C) end, Label) of
     true ->
-      Part;
+      Label;
     false ->
-      ?ACE_PREFIX ++ punycode:encode(idna_unicode:normalize_kc(Part))
+      ?ACE_PREFIX ++ punycode:encode(idna_unicode:normalize_kc(Label))
   end.
 
 %%============================================================================
