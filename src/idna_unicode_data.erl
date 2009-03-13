@@ -51,9 +51,12 @@ init(noargs) ->
   {ok, undefined}.
 
 handle_call({combining_class, C}, _From, Data) ->
-  lookup(C, Data, fun(Props) ->
-    {reply, erlang:list_to_integer(element(?COMBINING_CLASS, Props)), Data}
-  end);
+  case lookup(C, Data) of
+    {value, Props} ->
+      {reply, erlang:list_to_integer(element(?COMBINING_CLASS, Props)), Data};
+    false ->
+      {reply, 0, Data}
+  end;
 handle_call({compat, C}, _From, Data) ->
   lookup(C, Data, fun(Props) ->
     case element(?DECOMPOSITION, Props) of
@@ -144,8 +147,11 @@ hex(Codepoint) ->
 dehex(Strings) ->
   [erlang:list_to_integer(String, 16) || String <- Strings].
 
+lookup(Codepoint, Data) ->
+  lists:keysearch(hex(Codepoint), 1, Data).
+
 lookup(Codepoint, Data, Fun) ->
-  case lists:keysearch(hex(Codepoint), 1, Data) of
+  case lookup(Codepoint, Data) of
     {value, Props} ->
       Fun(Props);
     false ->
