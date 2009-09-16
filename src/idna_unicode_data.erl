@@ -38,7 +38,7 @@ lowercase(C) ->
   gen_server:call(?SERVER, {lowercase, C}).
 
 start() ->
-  gen_server:start_link({local, ?SERVER}, ?MODULE, noargs, []).
+  gen_server:start({local, ?SERVER}, ?MODULE, noargs, []).
 
 start_link() ->
   gen_server:start_link({local, ?SERVER}, ?MODULE, noargs, []).
