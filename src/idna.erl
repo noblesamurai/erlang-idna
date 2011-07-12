@@ -10,7 +10,14 @@
 
 start() ->
   idna_unicode_data:start(),
-  idna_unicode_data:load("http://www.unicode.org/Public/UNIDATA/UnicodeData.txt").
+  File = code:priv_dir('erlang') ++ "/UnicodeData.txt",
+  case file:read_file(File) of
+    {'ok', Data} -> idna_unicode_data:load(Data);
+	{'error', _} ->
+      {ok, {{_, 200, _}, _, GetData}} = http:request(get, {"http://www.unicode.org/Public/UNIDATA/UnicodeData.txt", []}, [], [{body_format, binary}]),
+	  file:write_file(File, GetData),
+	  idna_unicode_data:load(GetData)
+  end.
 
 to_ascii(Domain) ->
   to_ascii(string:tokens(idna_unicode:downcase(Domain), "."), []).

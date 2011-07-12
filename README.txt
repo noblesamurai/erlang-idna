@@ -1,5 +1,9 @@
 A pure Erlang IDNA implementation.
 
+An attempt will be made to read from priv/UnicodeData.txt. If the file does not exist,
+it is downloaded from unicode.org, and an attempt is made to save it to the above filename,
+though no checking is done as to whether or not this succeeded.
+
 Quick start:
 
   $ make
