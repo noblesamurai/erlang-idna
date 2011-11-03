@@ -92,6 +92,10 @@ encode_digit(N) ->
 % decode
 decode([], Head, Tail) ->
   decode_whileloop(Tail, Head, #decode{});
+
+% If we have a repeated ?DELIMITER, pass one through into Tail (Output)
+decode([?DELIMITER, ?DELIMITER|Input], [], Tail) -> decode([?DELIMITER|Input], Tail, [?DELIMITER]);
+
 decode([?DELIMITER|Input], [], Tail) -> decode(Input, Tail, []);
 decode([?DELIMITER|Input], Head, Tail) -> decode(Input, Head ++ [?DELIMITER|Tail], []);
 decode([C|Input], Head, Tail) -> decode(Input, Head, Tail ++ [C]).
